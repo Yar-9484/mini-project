@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Details</title>
+    <style>
+        body {
+            background-color: blue;
+            margin-top: 30px;
+        }
+
+        .user-details {
+
+            display: block;
+            text-align: center;
+            background-color: yellow;
+            box-shadow: 5px 5px 10px red;
+            width: 90%;
+            margin: auto;
+            padding: 10px;
+            border-radius: 10px;
+            font-family: Poppins, sans-serif;
+            font-size: 26px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            transition: transform 0.2s;
+        }
+
+        /*.user-details:hover {*/
+        /*    transform: scale(1.02);*/
+        /*}*/
+
+        .posts-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+
+
+        }
+
+        .post-block {
+            width: 18%;
+            margin-bottom: 26px;
+            padding: 20px;
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            background-color: yellow;
+            box-shadow: 5px 5px 10px red;
+            border-radius: 10px;
+            font-family: Poppins, sans-serif;
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            transition: transform 0.2s;
+        }
+
+        /*.post-block:hover {*/
+        /*    transform: scale(1.02);*/
+        /*}*/
+
+        .load-posts {
+            font-family: Poppins, sans-serif;
+            font-size: 26px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<div id="user-details" class="user-details"></div>
+<button id="load-posts" style="display: block; font-size: 26px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal; margin: 30px auto; padding: 10px; width: 90%;">Posts of Current User
+</button>
+<button id="back-to-user" style="display: block; margin: 30px auto; padding: 10px; width: 25%;">Back to User</button>
+<div id="posts-container" class="posts-container"></div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+
+    fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            const userDetails = document.getElementById('user-details');
+            userDetails.innerHTML = `
+                    <p>ID: ${user.id}</p>
+                    <p>Name: ${user.name}</p>
+                    <p>Username: ${user.username}</p>
+                    <p>Email: ${user.email}</p>
+                    <p>Address: ${user.address.street}, ${user.address.suite}, ${user.address.city}, ${user.address.zipcode}</p>
+                    <p>Phone: ${user.phone}</p>
+                    <p>Website: ${user.website}</p>
+                    <p>Company: ${user.company.name}</p>
+                `;
+        });
+    document.getElementById('back-to-user').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+    document.getElementById('load-posts').addEventListener('click', () => {
+        fetch(`https://jsonplaceholder.typicode.com/users/${userId}/posts`)
+            .then(response => response.json())
+            .then(posts => {
+                const postsContainer = document.getElementById('posts-container');
+                postsContainer.innerHTML = '';
+                posts.forEach(post => {
+                    const postBlock = document.createElement('div');
+                    postBlock.className = 'post-block';
+                    postBlock.innerHTML = `
+                            <p>Title: ${post.title}</p>
+                            <a href="post-details.html?id=${post.id}">View Post Details</a>
+                        `;
+                    postsContainer.appendChild(postBlock);
+                });
+            });
+    });
+</script>
+
+
+</body>
+</html>
